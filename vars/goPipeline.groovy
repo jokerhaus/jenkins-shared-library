@@ -30,17 +30,19 @@ def call(Map config = [:]) {
         
         stage('Build Docker Image') {
             echo "Building Docker image: ${image}"
+            // Настраиваем права доступа к Docker socket
             sh """
-                sudo docker build -t ${image} .
-                sudo docker tag ${image} ${imageLatest}
+                chmod 666 /var/run/docker.sock || true
+                docker build -t ${image} .
+                docker tag ${image} ${imageLatest}
             """
         }
         
         stage('Push Docker Image') {
             echo "Pushing Docker images to registry"
             sh """
-                sudo docker push ${image}
-                sudo docker push ${imageLatest}
+                docker push ${image}
+                docker push ${imageLatest}
             """
         }
         
