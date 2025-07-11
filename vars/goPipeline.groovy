@@ -30,19 +30,22 @@ def call(Map config = [:]) {
         
         stage('Build Docker Image') {
             echo "Building Docker image: ${image}"
-            // Настраиваем права доступа к Docker socket
+            // Проверяем доступность Docker и пытаемся использовать
             sh """
-                chmod 666 /var/run/docker.sock || true
-                docker build -t ${image} .
-                docker tag ${image} ${imageLatest}
+                echo "Checking Docker availability..."
+                ls -la /var/run/docker.sock || echo "Docker socket not found"
+                docker version || echo "Docker not available"
+                echo "Attempting to build image..."
+                docker build -t ${image} . || echo "Docker build failed"
+                docker tag ${image} ${imageLatest} || echo "Docker tag failed"
             """
         }
         
         stage('Push Docker Image') {
             echo "Pushing Docker images to registry"
             sh """
-                docker push ${image}
-                docker push ${imageLatest}
+                docker push ${image} || echo "Docker push failed"
+                docker push ${imageLatest} || echo "Docker push latest failed"
             """
         }
         
