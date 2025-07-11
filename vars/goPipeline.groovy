@@ -22,7 +22,10 @@ def call(Map config = [:]) {
 
         stage('Checkout Project') {
             echo "Checking out ${repo} branch ${branch}"
-            git branch: branch, url: repo
+            // Используем credentials для аутентификации
+            git branch: branch, 
+                url: repo,
+                credentialsId: 'github-token'
         }
         
         stage('Build Docker Image') {
