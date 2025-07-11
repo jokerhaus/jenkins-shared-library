@@ -31,16 +31,16 @@ def call(Map config = [:]) {
         stage('Build Docker Image') {
             echo "Building Docker image: ${image}"
             sh """
-                docker build -t ${image} .
-                docker tag ${image} ${imageLatest}
+                sudo docker build -t ${image} .
+                sudo docker tag ${image} ${imageLatest}
             """
         }
         
         stage('Push Docker Image') {
             echo "Pushing Docker images to registry"
             sh """
-                docker push ${image}
-                docker push ${imageLatest}
+                sudo docker push ${image}
+                sudo docker push ${imageLatest}
             """
         }
         
